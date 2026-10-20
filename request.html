@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلب استشارة</title>
+<style>
+  :root{--bg:#f6f7f9;--ink:#14202e;--muted:#5d6b7a;--accent:#0b5cab;--line:#d9dfe6}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+  header a{color:#fff;text-decoration:none;font-size:.95rem}
+  .wrap{max-width:560px;margin:30px auto;padding:0 16px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px}
+  h1{font-size:1.4rem;margin-bottom:4px}
+  .sub{color:var(--muted);margin-bottom:20px;font-size:.95rem}
+  label{display:block;font-size:.9rem;margin:14px 0 4px;font-weight:600}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:1rem;background:#fff}
+  input:focus,select:focus,textarea:focus{outline:2px solid #b7d4f0;border-color:var(--accent)}
+  textarea{min-height:130px;resize:vertical}
+  button{margin-top:20px;width:100%;background:var(--accent);color:#fff;border:0;padding:12px;border-radius:8px;font-size:1rem;cursor:pointer;font-family:inherit}
+  button:hover{opacity:.92}
+  .hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+</style>
+</head>
+<body>
+<header>
+  <strong>طلب استشارة</strong>
+  <a href="index.html">← العودة للأعمال</a>
+</header>
+
+<div class="wrap">
+  <div class="box">
+    <h1>اطلب استشارة هندسية</h1>
+    <p class="sub">املأ البيانات وسنتواصل معك في أقرب وقت.</p>
+
+    <form action="https://formsubmit.co/Yousfmefreh@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="طلب استشارة جديد من الموقع">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
+
+      <label for="n">الاسم</label>
+      <input id="n" name="الاسم" required>
+
+      <label for="p">رقم الجوال</label>
+      <input id="p" name="الجوال" type="tel" dir="ltr" required>
+
+      <label for="e">البريد الإلكتروني (اختياري)</label>
+      <input id="e" name="email" type="email" dir="ltr">
+
+      <label for="s">نوع الخدمة</label>
+      <select id="s" name="نوع الخدمة">
+        <option>تصميم معماري</option>
+        <option>تصميم إنشائي</option>
+        <option>إشراف على التنفيذ</option>
+        <option>تنفيذ ومقاولات</option>
+        <option>كهرباء وميكانيكا</option>
+        <option>أخرى</option>
+      </select>
+
+      <label for="m">تفاصيل الطلب</label>
+      <textarea id="m" name="التفاصيل" required></textarea>
+
+      <button type="submit">إرسال الطلب</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

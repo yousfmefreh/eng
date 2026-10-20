@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أعمالنا</title>
+<script src="data.js"></script>
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#14202e;--muted:#5d6b7a;--accent:#0b5cab;--line:#e3e7ec}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+  header h1{font-size:1.15rem}
+  .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:.95rem;border:0;cursor:pointer}
+  .btn:hover{opacity:.9}
+  .hero{background:linear-gradient(135deg,#14202e,#0b5cab);color:#fff;text-align:center;padding:70px 20px}
+  .hero h2{font-size:clamp(1.6rem,5vw,2.6rem);margin-bottom:10px}
+  .hero p{opacity:.9;margin-bottom:24px}
+  .hero .btn{background:#fff;color:var(--ink);font-weight:600}
+  main{max-width:1100px;margin:0 auto;padding:40px 20px}
+  h3.sec{font-size:1.4rem;margin-bottom:16px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .filters button{background:#fff;border:1px solid var(--line);padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.9rem}
+  .filters button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+  .card{background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .card .img{height:190px;background:#dfe6ee center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#97a5b4;font-size:2.4rem}
+  .card .body{padding:16px}
+  .tag{display:inline-block;font-size:.75rem;background:#e8f1fb;color:var(--accent);padding:2px 10px;border-radius:12px;margin-bottom:6px}
+  .card h4{margin-bottom:4px}
+  .card p{color:var(--muted);font-size:.92rem}
+  .card .yr{font-size:.8rem;color:var(--muted);margin-top:8px}
+  .about{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;margin-top:40px}
+  .about p{color:var(--muted)}
+  footer{background:var(--ink);color:#cfd8e2;text-align:center;padding:30px 20px;margin-top:50px;font-size:.95rem}
+  footer a{color:#fff}
+  .empty{color:var(--muted);padding:30px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="cname"></h1>
+  <a class="btn" href="request.html">طلب استشارة</a>
+</header>
+
+<section class="hero">
+  <h2 id="ctag"></h2>
+  <p>تعرّف على أبرز أعمالنا ومشاريعنا</p>
+  <a class="btn" href="request.html">اطلب استشارتك الآن</a>
+</section>
+
+<main>
+  <h3 class="sec">أعمالنا</h3>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="about">
+    <h3 class="sec">من نحن</h3>
+    <p id="cabout"></p>
+  </div>
+</main>
+
+<footer>
+  <div id="cinfo"></div>
+</footer>
+
+<script>
+(function(){
+  var D = window.SITE_DATA || {company:{},projects:[]};
+  var C = D.company || {};
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+  document.title = C.name || "أعمالنا";
+  document.getElementById("cname").textContent = C.name || "";
+  document.getElementById("ctag").textContent = C.tagline || "";
+  document.getElementById("cabout").textContent = C.about || "";
+
+  var info = [];
+  if(C.phone) info.push("هاتف: <span dir='ltr'>"+esc(C.phone)+"</span>");
+  if(C.whatsapp) info.push("<a href='https://wa.me/"+esc(C.whatsapp)+"' target='_blank'>واتساب</a>");
+  if(C.email) info.push("<a href='mailto:"+esc(C.email)+"'>"+esc(C.email)+"</a>");
+  if(C.address) info.push(esc(C.address));
+  document.getElementById("cinfo").innerHTML = info.join(" &nbsp;|&nbsp; ");
+
+  var projects = D.projects || [];
+  var current = "الكل";
+
+  function renderFilters(){
+    var cats = ["الكل"];
+    projects.forEach(function(p){ if(p.category && cats.indexOf(p.category)<0) cats.push(p.category) });
+    var box = document.getElementById("filters");
+    box.innerHTML = "";
+    if(cats.length<=2){ return; }
+    cats.forEach(function(c){
+      var b = document.createElement("button");
+      b.textContent = c;
+      if(c===current) b.className = "on";
+      b.onclick = function(){ current = c; renderFilters(); renderGrid(); };
+      box.appendChild(b);
+    });
+  }
+
+  function renderGrid(){
+    var list = projects.filter(function(p){ return current==="الكل" || p.category===current });
+    var g = document.getElementById("grid");
+    if(!list.length){ g.innerHTML = "<div class='empty'>لا توجد أعمال لعرضها حالياً</div>"; return; }
+    g.innerHTML = list.map(function(p){
+      var img = p.image ? "<div class='img' style=\"background-image:url('"+p.image+"')\"></div>" : "<div class='img'>🏗️</div>";
+      return "<div class='card'>"+img+"<div class='body'>"+
+        (p.category?"<span class='tag'>"+esc(p.category)+"</span>":"")+
+        "<h4>"+esc(p.title)+"</h4><p>"+esc(p.description)+"</p>"+
+        (p.year?"<div class='yr'>"+esc(p.year)+"</div>":"")+
+        "</div></div>";
+    }).join("");
+  }
+
+  renderFilters(); renderGrid();
+})();
+</script>
+</body>
+</html>

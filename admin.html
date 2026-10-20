@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة التحكم</title>
+<script src="data.js"></script>
+<style>
+  :root{--bg:#f3f5f8;--ink:#14202e;--muted:#5d6b7a;--accent:#0b5cab;--line:#d9dfe6;--ok:#1b8a4b;--bad:#c0392b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+  header a{color:#cfd8e2;font-size:.9rem;text-decoration:none}
+  .wrap{max-width:860px;margin:20px auto;padding:0 16px 80px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+  h2{font-size:1.1rem;margin-bottom:12px}
+  label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 3px}
+  input,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:.95rem}
+  textarea{min-height:80px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+  .btn{background:var(--accent);color:#fff;border:0;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.95rem}
+  .btn.light{background:#e8edf3;color:var(--ink)}
+  .btn.red{background:#fbeaea;color:var(--bad)}
+  .btn:hover{opacity:.9}
+  .status{padding:12px 14px;border-radius:8px;font-size:.92rem;margin-bottom:14px;background:#fff7e0;border:1px solid #f0dc9a}
+  .status.ok{background:#e8f6ee;border-color:#a8dcbd;color:var(--ok)}
+  .proj{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;background:#fafbfc}
+  .proj .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .thumb{width:100%;max-width:220px;height:130px;border-radius:8px;background:#dfe6ee center/cover no-repeat;margin:8px 0;display:flex;align-items:center;justify-content:center;color:#97a5b4}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .savebar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap}
+  .savebar span{font-size:.88rem;color:var(--muted)}
+  small{color:var(--muted)}
+  #gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+  #gate .g{background:#fff;border-radius:14px;padding:26px;width:100%;max-width:360px}
+  #gate h2{margin-bottom:6px}
+  #gate p{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+  #gate .btn{width:100%;margin-top:14px}
+  #gerr{color:var(--bad);font-size:.88rem;margin-top:8px;min-height:1.2em}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="g">
+    <h2 id="gtitle">🔒 لوحة التحكم</h2>
+    <p id="gsub">أدخل الرقم السري للدخول</p>
+    <input id="gpw" type="password" dir="ltr" autocomplete="off" placeholder="الرقم السري">
+    <input id="gpw2" type="password" dir="ltr" autocomplete="off" placeholder="أعد كتابة الرقم السري" style="display:none;margin-top:10px">
+    <div id="gerr"></div>
+    <button class="btn" id="gbtn">دخول</button>
+  </div>
+</div>
+
+<header>
+  <strong>لوحة التحكم</strong>
+  <span><a href="index.html" target="_blank">معاينة الموقع ↗</a></span>
+</header>
+
+<div class="wrap" id="app" style="display:none">
+
+  <div class="status" id="status">
+    <b>الخطوة الأولى:</b> اضغط «ربط ملف data.js» واختر الملف الموجود بجانب هذه الصفحة، وبعدها كل تعديل يُحفظ مباشرة داخل الملف.
+    <div class="actions"><button class="btn" id="connect">ربط ملف data.js</button></div>
+    <small id="support"></small>
+  </div>
+
+  <div class="box">
+    <h2>بيانات الشركة</h2>
+    <div class="row">
+      <div><label>اسم الشركة</label><input id="c_name"></div>
+      <div><label>الشعار النصي</label><input id="c_tagline"></div>
+    </div>
+    <label>نبذة عن الشركة</label><textarea id="c_about"></textarea>
+    <div class="row">
+      <div><label>الهاتف</label><input id="c_phone" dir="ltr"></div>
+      <div><label>واتساب (أرقام فقط مع رمز الدولة)</label><input id="c_whatsapp" dir="ltr"></div>
+    </div>
+    <div class="row">
+      <div><label>البريد</label><input id="c_email" dir="ltr"></div>
+      <div><label>العنوان</label><input id="c_address"></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>تغيير الرقم السري</h2>
+    <div class="row">
+      <div><label>رقم سري جديد</label><input id="newpw" type="password" dir="ltr" autocomplete="off"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn light" id="chpw">تغيير</button></div>
+    </div>
+    <small id="pwmsg">بعد التغيير اضغط «حفظ التعديلات».</small>
+  </div>
+
+  <div class="box">
+    <div class="top" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h2 style="margin:0">الأعمال المعروضة</h2>
+      <button class="btn" id="add">+ إضافة عمل</button>
+    </div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<div class="savebar" id="savebar" style="display:none">
+  <button class="btn" id="save">💾 حفظ التعديلات</button>
+  <span id="savemsg">لا توجد تعديلات</span>
+</div>
+
+<script>
+(function(){
+  var data = JSON.parse(JSON.stringify(window.SITE_DATA || {company:{},projects:[]}));
+  data.company = data.company || {};
+  data.projects = data.projects || [];
+  var handle = null, timer = null, dirty = false;
+  var $ = function(id){ return document.getElementById(id) };
+  var canFS = ("showOpenFilePicker" in window);
+
+  $("support").textContent = canFS ? "" : "متصفحك لا يدعم الحفظ المباشر في الملف. استخدم Chrome أو Edge على الكمبيوتر، أو اضغط حفظ وسيُنزَّل ملف data.js جديد استبدل به القديم.";
+
+  var cfields = ["name","tagline","about","phone","whatsapp","email","address"];
+  function fillCompany(){ cfields.forEach(function(f){ $("c_"+f).value = data.company[f] || "" }) }
+  cfields.forEach(function(f){
+    $("c_"+f).addEventListener("input", function(e){ data.company[f] = e.target.value; changed(); });
+  });
+
+  function uid(){ return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2,5) }
+
+  function renderList(){
+    var box = $("list");
+    box.innerHTML = "";
+    if(!data.projects.length){ box.innerHTML = "<small>لا توجد أعمال بعد. اضغط «إضافة عمل».</small>"; return; }
+    data.projects.forEach(function(p, i){
+      var d = document.createElement("div");
+      d.className = "proj";
+      d.innerHTML =
+        "<div class='top'><b>عمل رقم "+(i+1)+"</b><span class='actions' style='margin:0'>"+
+        "<button class='btn light' data-a='up'>↑</button><button class='btn light' data-a='down'>↓</button>"+
+        "<button class='btn red' data-a='del'>حذف</button></span></div>"+
+        "<div class='row'><div><label>العنوان</label><input data-f='title'></div>"+
+        "<div><label>التصنيف</label><input data-f='category'></div></div>"+
+        "<div class='row'><div><label>السنة</label><input data-f='year'></div><div></div></div>"+
+        "<label>الوصف</label><textarea data-f='description'></textarea>"+
+        "<div class='thumb'></div>"+
+        "<div class='actions'><button class='btn light' data-a='img'>اختيار صورة</button>"+
+        "<button class='btn light' data-a='noimg'>إزالة الصورة</button></div>";
+      var th = d.querySelector(".thumb");
+      if(p.image){ th.style.backgroundImage = "url('"+p.image+"')"; } else { th.textContent = "بدون صورة"; }
+
+      d.querySelectorAll("[data-f]").forEach(function(el){
+        el.value = p[el.getAttribute("data-f")] || "";
+        el.addEventListener("input", function(){ p[el.getAttribute("data-f")] = el.value; changed(); });
+      });
+      d.querySelectorAll("[data-a]").forEach(function(b){
+        b.addEventListener("click", function(){
+          var a = b.getAttribute("data-a");
+          if(a==="del"){ if(confirm("حذف هذا العمل؟")){ data.projects.splice(i,1); renderList(); changed(); } }
+          if(a==="up" && i>0){ data.projects.splice(i-1,0,data.projects.splice(i,1)[0]); renderList(); changed(); }
+          if(a==="down" && i<data.projects.length-1){ data.projects.splice(i+1,0,data.projects.splice(i,1)[0]); renderList(); changed(); }
+          if(a==="noimg"){ p.image = ""; renderList(); changed(); }
+          if(a==="img"){ pickImage(p); }
+        });
+      });
+      box.appendChild(d);
+    });
+  }
+
+  function pickImage(p){
+    var inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "image/*";
+    inp.onchange = function(){
+      var f = inp.files[0]; if(!f) return;
+      var r = new FileReader();
+      r.onload = function(){
+        var img = new Image();
+        img.onload = function(){
+          var max = 1200, w = img.width, h = img.height;
+          if(w > max){ h = Math.round(h * max / w); w = max; }
+          var c = document.createElement("canvas"); c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          p.image = c.toDataURL("image/jpeg", 0.8);
+          renderList(); changed();
+        };
+        img.src = r.result;
+      };
+      r.readAsDataURL(f);
+    };
+    inp.click();
+  }
+
+  $("add").onclick = function(){
+    data.projects.unshift({id:uid(), title:"", category:"", year:"", description:"", image:""});
+    renderList(); changed();
+  };
+
+  function serialize(){ return "window.SITE_DATA = " + JSON.stringify(data, null, 2) + ";\n"; }
+
+  function setMsg(t){ $("savemsg").textContent = t; }
+
+  async function saveNow(){
+    clearTimeout(timer);
+    var text = serialize();
+    if(handle){
+      try{
+        var w = await handle.createWritable();
+        await w.write(text); await w.close();
+        dirty = false;
+        setMsg("✔ تم الحفظ في الملف " + new Date().toLocaleTimeString("ar"));
+      }catch(e){ setMsg("تعذّر الحفظ: " + e.message); }
+    } else {
+      var blob = new Blob([text], {type:"text/javascript"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "data.js";
+      document.body.appendChild(a); a.click(); a.remove();
+      dirty = false;
+      setMsg("تم تنزيل data.js — استبدل به الملف القديم");
+    }
+  }
+
+  function changed(){
+    dirty = true;
+    if(handle){ setMsg("جارٍ الحفظ..."); clearTimeout(timer); timer = setTimeout(saveNow, 700); }
+    else setMsg("يوجد تعديلات غير محفوظة");
+  }
+
+  $("save").onclick = saveNow;
+
+  $("connect").onclick = async function(){
+    if(!canFS){ alert("هذه الميزة تعمل على Chrome أو Edge في الكمبيوتر."); return; }
+    try{
+      var hs = await window.showOpenFilePicker({
+        multiple:false,
+        types:[{description:"data.js", accept:{"text/javascript":[".js"]}}]
+      });
+      handle = hs[0];
+      var perm = await handle.requestPermission({mode:"readwrite"});
+      if(perm !== "granted"){ handle = null; alert("لازم تسمح بالتعديل على الملف."); return; }
+      var file = await handle.getFile();
+      var txt = await file.text();
+      var m = txt.match(/\{[\s\S]*\}/);
+      var keepHash = data.adminHash;
+      if(m){ try{ data = JSON.parse(m[0]); data.company = data.company||{}; data.projects = data.projects||[]; }catch(e){} }
+      if(keepHash && data.adminHash !== keepHash){ data.adminHash = keepHash; changed(); }
+      fillCompany(); renderList();
+      var s = $("status");
+      s.className = "status ok";
+      s.innerHTML = "✔ تم الربط بالملف <b>" + handle.name + "</b> — أي تعديل يُحفظ تلقائياً داخله.";
+      setMsg("جاهز");
+    }catch(e){ /* cancelled */ }
+  };
+
+  window.addEventListener("beforeunload", function(e){ if(dirty){ e.preventDefault(); e.returnValue = ""; } });
+
+  /* ===== الرقم السري ===== */
+  async function sha(s){
+    var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("eng-site:" + s));
+    return Array.from(new Uint8Array(b)).map(function(x){ return x.toString(16).padStart(2,"0") }).join("");
+  }
+  function unlock(){
+    $("gate").style.display = "none";
+    $("app").style.display = "";
+    $("savebar").style.display = "";
+  }
+  var setupMode = !data.adminHash;
+  if(setupMode){
+    $("gtitle").textContent = "🔐 تعيين رقم سري";
+    $("gsub").textContent = "هذه أول مرة. اختر رقماً سرياً (٦ خانات على الأقل).";
+    $("gpw2").style.display = "";
+    $("gbtn").textContent = "حفظ والدخول";
+  }
+  async function gateGo(){
+    var pw = $("gpw").value, err = $("gerr");
+    err.textContent = "";
+    if(!(window.crypto && crypto.subtle)){ err.textContent = "افتح الصفحة من الملف مباشرة أو من رابط https."; return; }
+    if(setupMode){
+      if(pw.length < 6){ err.textContent = "الرقم السري قصير (٦ خانات على الأقل)."; return; }
+      if(pw !== $("gpw2").value){ err.textContent = "الرقمان غير متطابقين."; return; }
+      data.adminHash = await sha(pw);
+      unlock();
+      changed();
+      setMsg("تم تعيين الرقم السري — اربط الملف واضغط حفظ");
+    } else {
+      if((await sha(pw)) === data.adminHash){ unlock(); }
+      else { err.textContent = "الرقم السري غير صحيح."; $("gpw").value = ""; }
+    }
+  }
+  $("gbtn").onclick = gateGo;
+  $("gpw").addEventListener("keydown", function(e){ if(e.key==="Enter") gateGo(); });
+  $("gpw2").addEventListener("keydown", function(e){ if(e.key==="Enter") gateGo(); });
+
+  $("chpw").onclick = async function(){
+    var v = $("newpw").value;
+    if(v.length < 6){ $("pwmsg").textContent = "الرقم السري قصير (٦ خانات على الأقل)."; return; }
+    data.adminHash = await sha(v);
+    $("newpw").value = "";
+    $("pwmsg").textContent = "✔ تم التغيير.";
+    changed();
+  };
+
+  fillCompany(); renderList();
+})();
+</script>
+</body>
+</html>
